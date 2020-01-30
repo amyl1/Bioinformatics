@@ -9,15 +9,17 @@ def score(seq1,seq2):
     elif seq1=="T" and seq2=="T":
         score=score+2
     elif seq1=="-" or seq2=="-":
-        score=score-3
-    else:
         score=score-4
+    else:
+        score=score-3
     return score
 def align(seq1,seq2):
     if len(seq1)==0:
         seq1="-"*len(seq2)
     elif len(seq2)==0:
         seq2=("-"*len(seq1))
+    elif len(seq1)==1 and len(seq2)==1:
+        return score (seq1,seq2)
     else:
         match_score=score(seq1[-1],seq2[-1])+align(seq1[:-1],seq2[:-1])
         blank1_score=score("-",seq2[-1])+align(seq1,seq2[:-1])
@@ -28,6 +30,5 @@ def align(seq1,seq2):
             return blank1_score
         else:
             return blank2_score
-    # function to add scores of each alignment
     return score(seq1,seq2)
-print(align("GAAT","GATT"))
+print(align("GAATT","GATTC"))
