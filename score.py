@@ -1,24 +1,33 @@
-def score(alignment):
+def score(seq1,seq2):
     score=0
-    if alignment[0]=="A" and alignment[1]=="A":
+    if seq1=="A" and seq2=="A":
         score=score+3
-    elif alignment[0]=="C" and alignment[1]=="C":
+    elif seq1=="C" and seq2=="C":
         score=score+2
-    elif alignment[0]=="G" and alignment[1]=="G":
+    elif seq1=="G" and seq2=="G":
         score=score+1
-    elif alignment[0]=="T" and alignment[1]=="T":
+    elif seq1=="T" and seq2=="T":
         score=score+2
-    elif alignment[0]=="-" or alignment[1]=="-":
+    elif seq1=="-" or seq2=="-":
         score=score-3
     else:
         score=score-4
     return score
 def align(seq1,seq2):
-    alignment=[]
-    if len(seq1)==1 and len(seq2)==1:
-        alignment.append(seq1)
-        alignment.append(seq2)
-        return score(alignment)
+    if len(seq1)==0:
+        seq1="-"*len(seq2)
+    elif len(seq2)==0:
+        seq2=("-"*len(seq1))
     else:
-        return align(seq1[-1],seq2[-1])+align(seq1[:-1],seq2[:-1])
-print(align("AGTC","CGTC"))
+        match_score=score(seq1[-1],seq2[-1])+align(seq1[:-1],seq2[:-1])
+        blank1_score=score("-",seq2[-1])+align(seq1,seq2[:-1])
+        blank2_score=score(seq1[-1],"-")+align(seq1[:-1],seq2)
+        if match_score>blank1_score and match_score>blank2_score:
+            return match_score
+        elif blank1_score>blank2_score:
+            return blank1_score
+        else:
+            return blank2_score
+    # function to add scores of each alignment
+    return score(seq1,seq2)
+print(align("GAAT","GATT"))
