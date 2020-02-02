@@ -8,10 +8,6 @@ def score(seq1,seq2):
         score=score+1
     elif seq1=="T" and seq2=="T":
         score=score+2
-    elif seq1=="-" or seq2=="-":
-        score=score-4
-    else:
-        score=score-3
     return score
 
 def newmatrix(seq1,seq2):
@@ -36,33 +32,60 @@ def newmatrix(seq1,seq2):
     return matrix
 
 def popmatrix(seq1,seq2):
+    string1=""
+    string2=""
+    direction=""
+
     scorematrix=newmatrix(seq1,seq2)
-    dirmatrix=newmatrix(seq1,seq2)
-    for r in range (0,len(dirmatrix)):
-        for c in range (0,len(dirmatrix[r])):
-            if dirmatrix[r][c]==0:
-                dirmatrix[r][c]="E"
+    backtrack=newmatrix(seq1,seq2)
+
+    for r in range (0,len(backtrack)):
+        for c in range (0,len(backtrack[r])):
+            if backtrack[r][c]==0:
+                backtrack[r][c]="E"
     for i in range (2,len(scorematrix)):
         for j in range (2,len(scorematrix[i])):
             D=scorematrix[i-1][j-1]+score(scorematrix[i][0],scorematrix[0][j])
-            U=scorematrix[i-1][j]-2
-            L=scorematrix[i][j-1]-2
+            U=scorematrix[i-1][j]-4
+            L=scorematrix[i][j-1]-4
             #consider if there are two scores equal
             if D<0 and U<0 and L<0:
                 scorematrix[i][j]=0
-                dirmatrix[i][j]="E"
-            elif D>U and D>L:
+                backtrack[i][j]="E"
+            elif D>=U and D>L:
                 scorematrix[i][j]=D
-                dirmatrix[i][j]="D"
+                backtrack[i][j]="D"
             elif U>L:
                 scorematrix[i][j]=U
-                dirmatrix[i][j]="U"
+                backtrack[i][j]="U"
             else:
                 scorematrix[i][j]=L
-                dirmatrix[i][j]="L"
+                backtrack[i][j]="L"
+    
+    bestscore=scorematrix[-1][-1]
     print (scorematrix)
-    print (dirmatrix)
-    print (scorematrix[-1][-1])
-popmatrix("ACGT","AGGT")
+    i=len(backtrack[0])-1
+    j=len(backtrack)-1
+    while direction != "E":
+        print (direction)
+        if backtrack[i][j]=="D":
+            string1=str(backtrack[0][i])+string1
+            string2=str(backtrack[j][0])+string2
+            j=j-1
+            i=i-1
+        elif backtrack[i][j]=="U":
+            string1="-"+string1
+            string2=str(backtrack[j][0])+string2
+            j=j-1
+        else:
+            string1=str(backtrack[0][i])+string1
+            string2="-"+string2
+            i=i-1
+        direction=backtrack[j][i]
+    return (string1,string2)
+        
+    
+#fix error with strings of different length   
+print(popmatrix("GATT","GAAT"))
 
 
