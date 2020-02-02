@@ -31,4 +31,4 @@ def align(seq1,seq2):
         else:
             return blank2_score
     return score(seq1,seq2)
-print(align("GAATT","GATTC"))
+print(align("GAA","GATT"))
