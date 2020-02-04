@@ -1,3 +1,5 @@
+#largest score in score matrix
+
 def score(seq1,seq2):
     score=0
     if seq1=="A" and seq2=="A":
@@ -12,8 +14,8 @@ def score(seq1,seq2):
 
 def newmatrix(seq1,seq2):
     matrix=[]
-    height=len(seq1)+2
-    width=len(seq2)+2
+    width=len(seq1)+2
+    height=len(seq2)+2
     for i in range (0,height):
         matrix.append([])
         for j in range (0,width):
@@ -61,31 +63,35 @@ def popmatrix(seq1,seq2):
             else:
                 scorematrix[i][j]=L
                 backtrack[i][j]="L"
+    bestscore=0
+    bestposition=[]
+    for x in range(2,len(scorematrix)):
+        for y in range(2,len(scorematrix[x])):
+            entry=scorematrix[x][y]
+            if entry>bestscore:
+                bestscore=entry
+                bestposition=[x,y]
     
-    bestscore=scorematrix[-1][-1]
-    print (scorematrix)
-    i=len(backtrack[0])-1
-    j=len(backtrack)-1
+    x=bestposition[0]
+    y=bestposition[1]
+    print(bestscore)
     while direction != "E":
-        print (direction)
-        if backtrack[i][j]=="D":
-            string1=str(backtrack[0][i])+string1
-            string2=str(backtrack[j][0])+string2
-            j=j-1
-            i=i-1
-        elif backtrack[i][j]=="U":
+        if backtrack[x][y]=="D":
+            string1=str(backtrack[0][y])+string1
+            string2=str(backtrack[x][0])+string2
+            x=x-1
+            y=y-1
+        elif backtrack[x][y]=="U":
             string1="-"+string1
-            string2=str(backtrack[j][0])+string2
-            j=j-1
+            string2=str(backtrack[x][0])+string2
+            x=x-1
         else:
-            string1=str(backtrack[0][i])+string1
+            string1=str(backtrack[0][y])+string1
             string2="-"+string2
-            i=i-1
-        direction=backtrack[j][i]
+            y=y-1
+        direction=backtrack[x][y]
     return (string1,string2)
-        
-    
 #fix error with strings of different length   
-print(popmatrix("GATT","GAAT"))
+print(popmatrix("GAT","GA"))
 
 
