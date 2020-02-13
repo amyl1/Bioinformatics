@@ -3,37 +3,51 @@ import time
 import sys
 
 # YOUR FUNCTIONS GO HERE -------------------------------------
-def score(string1,string2):
-    score=0
+
+#list to store all generated alignments
+alignments=[]
+def GenSeq(seq1,seq2,al1,al2):
+    x=len(seq1)
+    y=len(seq2)
+    #checks if both sequences are not empty
+    if x!=0 and y!=0:
+        #alignment matching the first two bases
+        GenSeq(seq1[1:],seq2[1:],al1+seq1[0], al2+seq2[0])
+        #alignment matching a gap in seq1 with a base in seq2 
+        GenSeq(seq1, seq2[1:],al1+"-", al2+seq2[0])
+        #matching a base in seq1 with a gap in seq2
+        GenSeq(seq1[1:],seq2,al1+seq1[0], al2+"-")
+    #if either of the sequences are empty
+    else:
+        #make the aligned sequences up to the same length by adding gaps
+        if x==0:
+            al2+=seq2
+            al1+="-"*y
+        elif y==0:
+            al1+=seq1
+            al2+="-"*x
+        #adds the aligned strings and their corresponding scores to the list
+        alignments.append([al1,al2,GenScore(al1,al2)])
+    return alignments
+
+#function which takes in the two aligned sequences and scores them
+def GenScore(string1,string2):
+    total=0
     for i in range (0,len(string1)):
         if string1[i]=="A" and string2[i]=="A":
-            score=score+3
-        elif string1[i]=="C" and string2[i]=="C":
-            score=score+2
+            total=total+3
         elif string1[i]=="G" and string2[i]=="G":
-            score=score+1
+            total=total+1
         elif string1[i]=="T" and string2[i]=="T":
-            score=score+2
+            total=total+2
+        elif string1[i]=="C" and string2[i]=="C":
+            total=total+2
         elif string1[i]=="-" or string2[i]=="-":
-            score=score-4
+            total=total-4
+        #if the bases do not match
         else:
-            score=score-3
-    return score
-
-sequence=[]
-def align(al1,al2,seq1,seq2):
-    if len(seq1)==0 or len(seq2)==0:
-        if len(seq1)==0:
-            al1+="-"*len(seq2)
-            al2+=seq2
-        elif len(seq2)==0:
-            al1+=seq1
-            al2+=("-"*len(seq1))
-        sequence.append([al1,al2])
-    else:
-        align(al1+seq1[0], al2+seq2[0], seq1[1:],seq2[1:])
-        align(al1+seq1[0], al2+"-", seq1[1:],seq2)
-        align(al1+"-", al2+seq2[0], seq1, seq2[1:])
+            total=total-3
+    return total
 # DO NOT EDIT ------------------------------------------------
 # Given an alignment, which is two strings, display it
 
@@ -71,26 +85,24 @@ start = time.time()
 # Call any functions you need here, you can define them above.
 # To work with the printing functions below the best alignment should be called best_alignment and its score should be called best_score. 
 # The number of alignments you have checked should be stored in a variable called num_alignments.
-align("","",seq1,seq2)
-best_score=0
+
+GenSeq(seq1,seq2,"","")
+#sets the best score seen so far to the score of the first alignment
+best_score=alignments[0][2]
 best_alignment=""
-num_alignments=0
-for i in range (0,len(sequence)):
-    num_alignments+=1
-    string1=sequence[i][0]
-    string2=sequence[i][1]
-    current_score=score(string1,string2)
-    if current_score>best_score:
+#iterates through list of alignments and compares each score to current best
+for i in range (0,len(alignments)):
+    current_score = alignments[i][2]
+    #if it finds a new best, update best score and store this alignment
+    if current_score>=best_score:
         best_score=current_score
-        best_alignment=sequence[i]
-
-
+        best_alignment=alignments[i]
+num_alignments=len(alignments)
 #-------------------------------------------------------------
 
 
 # DO NOT EDIT ------------------------------------------------
 # This calculates the time taken and will print out useful information 
-
 stop = time.time()
 time_taken=stop-start
 
@@ -101,3 +113,4 @@ print('Best (score '+str(best_score)+'):')
 displayAlignment(best_alignment)
 
 #-------------------------------------------------------------
+
